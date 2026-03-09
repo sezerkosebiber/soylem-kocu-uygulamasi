@@ -9,14 +9,16 @@ st.set_page_config(page_title="Matematiksel Söylem Koçu", page_icon="🧮")
 st.title("Yapay Zekâ Söylem Koçu")
 st.markdown("Öğretmen adaylarının matematiksel söylemlerini 5 temel boyutta analiz eden araştırma aracıdır.")
 
+# Güvenli Anahtar Kontrolü
 try:
     API_KEY = st.secrets["GEMINI_API_KEY"]
     WEBHOOK_URL = st.secrets["WEBHOOK_URL"]
     genai.configure(api_key=API_KEY)
 except Exception as e:
-    st.error(f"Sistem Hatası: Gerekli anahtarlar bulunamadı. Detay: {e}")
+    st.error(f"Sistem Hatası: Secrets (API_KEY veya WEBHOOK_URL) bulunamadı. Detay: {e}")
     st.stop()
 
+# Çoklu Ortam Uyumlu Sistem Talimatı
 system_instruction = """
 Sen, öğretmen adaylarının matematiksel söylem kalitesini ölçen, duygudan arındırılmış, analitik bir Yapay Zekâ Söylem Koçusun.
 
@@ -36,22 +38,22 @@ model = genai.GenerativeModel(
     system_instruction=system_instruction
 )
 
+# Kullanıcı Giriş Alanları
 ogrenci_no = st.text_input("Öğrenci No veya Rumuz (Araştırma Kaydı İçin):")
 
 st.markdown("---")
-st.markdown("**Analiz Edilecek Veriyi Girin (Metin yazabilir, fotoğraf yükleyebilir veya her ikisini de yapabilirsiniz):**")
+st.markdown("**Analiz Edilecek Veriyi Girin:**")
 
 ogrenci_metni = st.text_area("Yazılı Yanıtınız (İsteğe bağlı):", height=150)
 
-# Görsel Yükleme Alanları
 col1, col2 = st.columns(2)
 with col1:
     yuklenen_gorsel = st.file_uploader("Kağıttaki Yanıtı Yükle", type=["png", "jpg", "jpeg"])
 with col2:
     kamera_gorsel = st.camera_input("Veya Kameradan Çek")
 
+# Analiz ve Kayıt İşlemi
 if st.button("Analiz Et"):
-    # Hangi görselin kullanıldığını belirliyoruz (Kamera öncelikli)
     aktif_gorsel = kamera_gorsel if kamera_gorsel else yuklenen_gorsel
     
     if not ogrenci_no:
@@ -59,9 +61,9 @@ if st.button("Analiz Et"):
     elif not ogrenci_metni and not aktif_gorsel:
         st.warning("Lütfen analiz için bir metin yazın veya bir fotoğraf ekleyin.")
     else:
-        with st.spinner("Söylem (ve varsa görsel) 5 boyutta analiz ediliyor..."):
+        with st.spinner("Söylem analiz ediliyor ve veritabanına işleniyor..."):
             try:
-                # Yapay zekaya gidecek paketi hazırlıyoruz
+                # 1. Yapay Zekâ Analizi
                 icerik = []
                 if ogrenci_metni:
                     icerik.append(ogrenci_metni)
@@ -72,46 +74,43 @@ if st.button("Analiz Et"):
                 response = model.generate_content(icerik)
                 analiz_sonucu = response.text
                 
+                # Sonucu Ekrana Yazdır
                 st.subheader("Analiz Sonucu:")
                 st.write(analiz_sonucu)
                 
-                # Tabloya kaydedilecek metni ayarlıyoruz
-                kaydedilecek_metin = ogrenci_metni
-                if aktif_gorsel and not ogrenci_metni:
-                    kaydedilecek_metin = "[Sadece Görsel Yüklendi]"
-                elif aktif_gorsel and ogrenci_metni:
-                    kaydedilecek_metin = ogrenci_metni + " [+Görsel Yüklendi]"
-                    
-                # Görseli Google Drive'a göndermek için şifreliyoruz (Base64)
+                # 2. Veri Hazırlama (Drive ve Tablo için)
+                kaydedilecek_metin = ogrenci_metni if ogrenci_metni else "[Sadece Görsel Yüklendi]"
+                if aktif_gorsel and ogrenci_metni:
+                    kaydedilecek_metin += " [+Görsel Yüklendi]"
+                
                 gorsel_base64 = ""
                 gorsel_adi = ""
                 gorsel_mimeType = ""
                 
                 if aktif_gorsel:
-                    aktif_gorsel.seek(0) # Dosyayı baştan okumak için
+                    aktif_gorsel.seek(0)
                     gorsel_bytes = aktif_gorsel.getvalue()
                     gorsel_base64 = base64.b64encode(gorsel_bytes).decode('utf-8')
-                    gorsel_adi = f"{ogrenci_no}_gorsel.jpg"
+                    gorsel_adi = f"{ogrenci_no}_{int(st.session_state.get('counter', 0))}.jpg"
                     gorsel_mimeType = "image/jpeg"
 
-                try:
-                    # Kuryeye verileri teslim ediyoruz
-                    veri = {
-                        "ogrenci_no": ogrenci_no,
-                        "ogrenci_metni": kaydedilecek_metin,
-                        "analiz_sonucu": analiz_sonucu,
-                        "gorsel_base64": gorsel_base64,
-                        "gorsel_adi": gorsel_adi,
-                        "gorsel_mimeType": gorsel_mimeType
-                    }
-                    kayit = requests.post(WEBHOOK_URL, data=veri)
-                    
-                    if kayit.status_code == 200:
-                        st.success("Analiz başarıyla tamamlandı ve veriler (görsel dahil) araştırma tablosuna kaydedildi! 📝")
-                    else:
-                        st.warning(f"Kayıt Hatası! Kod: {kayit.status_code} | Detay: {kayit.text}")
-                except Exception as kayit_hatasi:
-                    st.warning(f"Tabloya bağlantı kurulamadı: {kayit_hatasi}")
+                # 3. Webhook (Google Tablo) Kaydı
+                veri = {
+                    "ogrenci_no": ogrenci_no,
+                    "ogrenci_metni": kaydedilecek_metin,
+                    "analiz_sonucu": analiz_sonucu,
+                    "gorsel_base64": gorsel_base64,
+                    "gorsel_adi": gorsel_adi,
+                    "gorsel_mimeType": gorsel_mimeType
+                }
+                
+                kayit_isteği = requests.post(WEBHOOK_URL, data=veri)
+                
+                # Kritik Kontrol: Google "Başarılı" dedi mi?
+                if "Başarılı" in kayit_isteği.text:
+                    st.success("Tebrikler! Analiz yapıldı ve tüm veriler araştırma tablonuza güvenle kaydedildi. 📝✅")
+                else:
+                    st.error(f"Analiz yapıldı ancak TABLOYA KAYDEDİLEMEDİ. Hata: {kayit_isteği.text}")
                     
             except Exception as e:
-                st.error(f"Sistem yoğunluğu nedeniyle bir hata oluştu: {e}")
+                st.error(f"Bir hata oluştu: {e}")
