@@ -62,7 +62,7 @@ if st.button("Analiz Et"):
                 st.success(
                     "Analiz başarıyla tamamlandı. (Veri kaydetme modülü daha sonra eklenecektir.)"
                 )
-            except Exception:
+            except Exception as e:
                 st.error(
                     f"Gerçek Hata: {e}"
                 )
