@@ -59,7 +59,7 @@ if st.button("Analiz Et"):
                     if kayit.status_code == 200:
                         st.success("Analiz başarıyla tamamlandı ve veriler araştırma tablosuna kaydedildi! 📝")
                     else:
-                        st.warning("Analiz tamamlandı ancak tabloya kaydedilirken bir sorun oluştu.")
+                        st.warning(f"Kayıt Hatası! Kod: {kayit.status_code} | Detay: {kayit.text}")
                 except Exception as kayit_hatasi:
                     st.warning(f"Tabloya bağlantı kurulamadı: {kayit_hatasi}")
                     
