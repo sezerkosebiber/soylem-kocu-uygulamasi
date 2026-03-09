@@ -1,6 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
 import requests
+import base64
 from PIL import Image
 
 st.set_page_config(page_title="Matematiksel Söylem Koçu", page_icon="🧮")
@@ -16,7 +17,6 @@ except Exception as e:
     st.error(f"Sistem Hatası: Gerekli anahtarlar bulunamadı. Detay: {e}")
     st.stop()
 
-# Sistem komutuna (görsel) ifadesini de ekledik
 system_instruction = """
 Sen, öğretmen adaylarının matematiksel söylem kalitesini ölçen, duygudan arındırılmış, analitik bir Yapay Zekâ Söylem Koçusun.
 
@@ -43,7 +43,7 @@ st.markdown("**Analiz Edilecek Veriyi Girin (Metin yazabilir, fotoğraf yükleye
 
 ogrenci_metni = st.text_area("Yazılı Yanıtınız (İsteğe bağlı):", height=150)
 
-# Görsel Yükleme Alanları (Yan yana iki sütun)
+# Görsel Yükleme Alanları
 col1, col2 = st.columns(2)
 with col1:
     yuklenen_gorsel = st.file_uploader("Kağıttaki Yanıtı Yükle", type=["png", "jpg", "jpeg"])
@@ -61,7 +61,7 @@ if st.button("Analiz Et"):
     else:
         with st.spinner("Söylem (ve varsa görsel) 5 boyutta analiz ediliyor..."):
             try:
-                # Yapay zekaya gidecek paketi hazırlıyoruz (Sadece metin, sadece görsel veya ikisi birden)
+                # Yapay zekaya gidecek paketi hazırlıyoruz
                 icerik = []
                 if ogrenci_metni:
                     icerik.append(ogrenci_metni)
@@ -75,24 +75,41 @@ if st.button("Analiz Et"):
                 st.subheader("Analiz Sonucu:")
                 st.write(analiz_sonucu)
                 
-                # Tabloya kaydedilecek metni ayarlıyoruz (Görsel yüklendiyse not düşüyoruz)
+                # Tabloya kaydedilecek metni ayarlıyoruz
                 kaydedilecek_metin = ogrenci_metni
                 if aktif_gorsel and not ogrenci_metni:
                     kaydedilecek_metin = "[Sadece Görsel Yüklendi]"
                 elif aktif_gorsel and ogrenci_metni:
                     kaydedilecek_metin = ogrenci_metni + " [+Görsel Yüklendi]"
                     
+                # Görseli Google Drive'a göndermek için şifreliyoruz (Base64)
+                gorsel_base64 = ""
+                gorsel_adi = ""
+                gorsel_mimeType = ""
+                
+                if aktif_gorsel:
+                    aktif_gorsel.seek(0) # Dosyayı baştan okumak için
+                    gorsel_bytes = aktif_gorsel.getvalue()
+                    gorsel_base64 = base64.b64encode(gorsel_bytes).decode('utf-8')
+                    gorsel_adi = f"{ogrenci_no}_gorsel.jpg"
+                    gorsel_mimeType = "image/jpeg"
+
                 try:
+                    # Kuryeye verileri teslim ediyoruz
                     veri = {
                         "ogrenci_no": ogrenci_no,
                         "ogrenci_metni": kaydedilecek_metin,
-                        "analiz_sonucu": analiz_sonucu
+                        "analiz_sonucu": analiz_sonucu,
+                        "gorsel_base64": gorsel_base64,
+                        "gorsel_adi": gorsel_adi,
+                        "gorsel_mimeType": gorsel_mimeType
                     }
                     kayit = requests.post(WEBHOOK_URL, data=veri)
+                    
                     if kayit.status_code == 200:
-                        st.success("Analiz başarıyla tamamlandı ve veriler araştırma tablosuna kaydedildi! 📝")
+                        st.success("Analiz başarıyla tamamlandı ve veriler (görsel dahil) araştırma tablosuna kaydedildi! 📝")
                     else:
-                        st.warning(f"Kayıt Hatası! Kod: {kayit.status_code}")
+                        st.warning(f"Kayıt Hatası! Kod: {kayit.status_code} | Detay: {kayit.text}")
                 except Exception as kayit_hatasi:
                     st.warning(f"Tabloya bağlantı kurulamadı: {kayit_hatasi}")
                     
