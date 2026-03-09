@@ -64,5 +64,5 @@ if st.button("Analiz Et"):
                 )
             except Exception:
                 st.error(
-                    "Sistem yoğunluğu nedeniyle bir hata oluştu. Lütfen birkaç saniye sonra tekrar deneyin."
+                    f"Gerçek Hata: {e}"
                 )
