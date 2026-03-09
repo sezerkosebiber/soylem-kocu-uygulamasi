@@ -1,6 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
 import requests
+from PIL import Image
 
 st.set_page_config(page_title="Matematiksel Söylem Koçu", page_icon="🧮")
 
@@ -12,9 +13,10 @@ try:
     WEBHOOK_URL = st.secrets["WEBHOOK_URL"]
     genai.configure(api_key=API_KEY)
 except Exception as e:
-    st.error(f"Sistem Hatası: Gerekli anahtarlar bulunamadı. Lütfen yönetici ile iletişime geçin. Detay: {e}")
+    st.error(f"Sistem Hatası: Gerekli anahtarlar bulunamadı. Detay: {e}")
     st.stop()
 
+# Sistem komutuna (görsel) ifadesini de ekledik
 system_instruction = """
 Sen, öğretmen adaylarının matematiksel söylem kalitesini ölçen, duygudan arındırılmış, analitik bir Yapay Zekâ Söylem Koçusun.
 
@@ -25,8 +27,8 @@ KATI KURALLAR:
    [Boyut Adı]
    - Bulgu: "..."
    - Öneri: "..."
-4. Eğer girdi matematiksel bir ifade içermiyorsa sadece şu mesajı ver: "Lütfen analiz edilecek matematiksel bir söylem metni giriniz."
-5. Asla yeni bir çözüm veya tam metin üretme. Sadece mevcut metindeki eksikliği bul ve iyileştirme rotası çiz.
+4. Eğer girdi (metin veya görsel) matematiksel bir ifade içermiyorsa sadece şu mesajı ver: "Lütfen analiz edilecek matematiksel bir söylem metni veya görseli giriniz."
+5. Asla yeni bir çözüm veya tam metin üretme. Sadece mevcut metindeki/görseldeki eksikliği bul ve iyileştirme rotası çiz.
 """
 
 model = genai.GenerativeModel(
@@ -35,31 +37,62 @@ model = genai.GenerativeModel(
 )
 
 ogrenci_no = st.text_input("Öğrenci No veya Rumuz (Araştırma Kaydı İçin):")
-ogrenci_metni = st.text_area("Analiz Edilecek Matematiksel Söylem Metni:", height=200)
+
+st.markdown("---")
+st.markdown("**Analiz Edilecek Veriyi Girin (Metin yazabilir, fotoğraf yükleyebilir veya her ikisini de yapabilirsiniz):**")
+
+ogrenci_metni = st.text_area("Yazılı Yanıtınız (İsteğe bağlı):", height=150)
+
+# Görsel Yükleme Alanları (Yan yana iki sütun)
+col1, col2 = st.columns(2)
+with col1:
+    yuklenen_gorsel = st.file_uploader("Kağıttaki Yanıtı Yükle", type=["png", "jpg", "jpeg"])
+with col2:
+    kamera_gorsel = st.camera_input("Veya Kameradan Çek")
 
 if st.button("Analiz Et"):
-    if not ogrenci_no or not ogrenci_metni:
-        st.warning("Lütfen hem öğrenci numaranızı hem de metninizi giriniz.")
+    # Hangi görselin kullanıldığını belirliyoruz (Kamera öncelikli)
+    aktif_gorsel = kamera_gorsel if kamera_gorsel else yuklenen_gorsel
+    
+    if not ogrenci_no:
+        st.warning("Lütfen araştırma kaydı için öğrenci numaranızı/rumuzunuzu giriniz.")
+    elif not ogrenci_metni and not aktif_gorsel:
+        st.warning("Lütfen analiz için bir metin yazın veya bir fotoğraf ekleyin.")
     else:
-        with st.spinner("Söylem 5 boyutta analiz ediliyor..."):
+        with st.spinner("Söylem (ve varsa görsel) 5 boyutta analiz ediliyor..."):
             try:
-                response = model.generate_content(ogrenci_metni)
+                # Yapay zekaya gidecek paketi hazırlıyoruz (Sadece metin, sadece görsel veya ikisi birden)
+                icerik = []
+                if ogrenci_metni:
+                    icerik.append(ogrenci_metni)
+                if aktif_gorsel:
+                    img = Image.open(aktif_gorsel)
+                    icerik.append(img)
+                    
+                response = model.generate_content(icerik)
                 analiz_sonucu = response.text
                 
                 st.subheader("Analiz Sonucu:")
                 st.write(analiz_sonucu)
                 
+                # Tabloya kaydedilecek metni ayarlıyoruz (Görsel yüklendiyse not düşüyoruz)
+                kaydedilecek_metin = ogrenci_metni
+                if aktif_gorsel and not ogrenci_metni:
+                    kaydedilecek_metin = "[Sadece Görsel Yüklendi]"
+                elif aktif_gorsel and ogrenci_metni:
+                    kaydedilecek_metin = ogrenci_metni + " [+Görsel Yüklendi]"
+                    
                 try:
                     veri = {
                         "ogrenci_no": ogrenci_no,
-                        "ogrenci_metni": ogrenci_metni,
+                        "ogrenci_metni": kaydedilecek_metin,
                         "analiz_sonucu": analiz_sonucu
                     }
                     kayit = requests.post(WEBHOOK_URL, data=veri)
                     if kayit.status_code == 200:
                         st.success("Analiz başarıyla tamamlandı ve veriler araştırma tablosuna kaydedildi! 📝")
                     else:
-                        st.warning(f"Kayıt Hatası! Kod: {kayit.status_code} | Detay: {kayit.text}")
+                        st.warning(f"Kayıt Hatası! Kod: {kayit.status_code}")
                 except Exception as kayit_hatasi:
                     st.warning(f"Tabloya bağlantı kurulamadı: {kayit_hatasi}")
                     
