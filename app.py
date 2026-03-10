@@ -16,7 +16,7 @@ with col1:
 
 with col2:
     st.markdown("""
-        <div style='text-align: left;'>
+        <div style='text-align: center;'>
             <h2 style='color: #003366; margin: 0; font-family: sans-serif; font-size: 1.8em; font-weight: bold;'>İSTANBUL ÜNİVERSİTESİ-CERRAHPAŞA</h2>
             <h3 style='color: #003366; margin: 0; font-family: sans-serif; font-size: 1.4em; font-weight: 500;'>Hasan Âli Yücel Eğitim Fakültesi</h3>
         </div>
