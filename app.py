@@ -4,10 +4,49 @@ import requests
 import base64
 from PIL import Image
 
-st.set_page_config(page_title="Matematiksel Söylem Koçu", page_icon="🧮")
+# Sayfa yapılandırması
+st.set_page_config(page_title="Matematiksel Söylem Koçu", page_icon="🧮", layout="centered")
 
-st.title("Yapay Zekâ Söylem Koçu")
-st.markdown("Öğretmen adaylarının matematiksel söylemlerini 5 temel boyutta analiz eden araştırma aracıdır.")
+# --- KURUMSAL BANNER VE BAŞLIK BÖLÜMÜ ---
+col1, col2 = st.columns([1, 4])
+
+with col1:
+    # Fakülte logosunu resmi adresten çekiyoruz
+    st.image("https://cdn.iuc.edu.tr/static/img/logolar/iuc_logo_v2.png", width=120)
+
+with col2:
+    st.markdown("""
+        <div style='text-align: left;'>
+            <h3 style='color: #003366; margin-bottom: 0;'>İSTANBUL ÜNİVERSİTESİ-CERRAHPAŞA</h3>
+            <h4 style='color: #003366; margin-top: 0;'>Hasan Âli Yücel Eğitim Fakültesi</h4>
+        </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("---")
+
+# Çalışma Başlığı - Renklendirilmiş ve Stilize Edilmiş
+st.markdown("""
+    <style>
+    .study-title {
+        text-align: center;
+        color: #4B0082; /* İsterseniz farklı bir renk koduyla değiştirebiliriz */
+        background-color: #f0f2f6;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 10px solid #003366;
+        font-family: 'Helvetica', sans-serif;
+    }
+    </style>
+    <div class='study-title'>
+        <h1>Matematiksel Söylem Analizi ve Geliştirme Portalı</h1>
+        <p style='font-size: 1.2em;'>Yapay Zekâ Destekli Söylem Koçu Araştırma Platformu</p>
+    </div>
+""", unsafe_allow_html=True)
+
+st.write("") # Boşluk
+# --- KURUMSAL BÖLÜM SONU ---
+
+
 
 # Güvenli Anahtar Kontrolü
 try:
