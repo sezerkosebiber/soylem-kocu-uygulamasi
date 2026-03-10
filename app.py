@@ -8,44 +8,50 @@ from PIL import Image
 st.set_page_config(page_title="Matematiksel Söylem Koçu", page_icon="🧮", layout="centered")
 
 # --- KURUMSAL BANNER VE BAŞLIK BÖLÜMÜ ---
-col1, col2 = st.columns([1, 4])
+# vertical_alignment="center" sayesinde logo ve metin dikeyde tam ortalanır.
+col1, col2 = st.columns([1, 4], vertical_alignment="center")
 
 with col1:
-    # Daha kararlı bir logo linki deniyoruz veya GitHub'a yüklediğiniz logo ismini yazın
     logo_url = "https://cdn.iuc.edu.tr/FileHandler.ashx?f=SuN_4kHlSEuRLhTvH_RFZA" 
     st.image(logo_url, width=120)
 
 with col2:
     st.markdown("""
-        <div style='text-align: left; padding-top: 10px;'>
-            <h2 style='color: #003366; margin-bottom: 0; font-family: sans-serif;'>İSTANBUL ÜNİVERSİTESİ-CERRAHPAŞA</h2>
-            <h3 style='color: #003366; margin-top: 0; font-family: sans-serif;'>Hasan Âli Yücel Eğitim Fakültesi</h3>
+        <div style='text-align: left;'>
+            <h2 style='color: #003366; margin: 0; font-family: sans-serif; font-size: 1.8em; font-weight: bold;'>İSTANBUL ÜNİVERSİTESİ-CERRAHPAŞA</h2>
+            <h3 style='color: #003366; margin: 0; font-family: sans-serif; font-size: 1.4em; font-weight: 500;'>Hasan Âli Yücel Eğitim Fakültesi</h3>
         </div>
     """, unsafe_allow_html=True)
 
-st.markdown("<hr style='border: 2px solid #003366;'>", unsafe_allow_html=True)
+st.markdown("<hr style='border: 1.5px solid #003366; margin-top: 10px; margin-bottom: 25px;'>", unsafe_allow_html=True)
 
-# Çalışma Başlığı - Cerrahpaşa Laciverti ve Altın Sarısı Vurgulu
+# Çalışma Başlığı - Mahir Hocamızın İsmiyle Birlikte
 st.markdown("""
     <style>
     .study-title {
         text-align: center;
         color: #ffffff;
         background: linear-gradient(90deg, #003366 0%, #00509d 100%);
-        padding: 30px;
+        padding: 35px;
         border-radius: 15px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         margin-bottom: 25px;
     }
     .study-title h1 {
         margin: 0;
-        font-size: 2.2em;
+        font-size: 2.1em;
         font-weight: bold;
     }
-    .study-title p {
-        margin: 10px 0 0 0;
-        font-size: 1.2em;
+    .authors {
+        margin-top: 15px;
+        font-size: 1.4em;
+        font-weight: 500;
+    }
+    .platform-sub {
+        margin-top: 8px;
+        font-size: 1.1em;
         opacity: 0.9;
+        font-weight: 300;
     }
     </style>
     <div class='study-title'>
