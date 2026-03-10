@@ -63,6 +63,22 @@ st.markdown("""
 # --- KURUMSAL BÖLÜM SONU ---
 
 
+# --- YÖNERGE VE HATIRLATMALAR BÖLÜMÜ ---
+st.info("""
+**📌 Lütfen Analize Başlamadan Önce Aşağıdaki Adımları İnceleyiniz:**
+
+**Teknik Hatırlatmalar:**
+* **Görsel Netliği:** Kameradan çekeceğiniz veya yükleyeceğiniz kağıt görüntüsünün aydınlık, yazının tam olarak okunabilir ve net olduğundan emin olunuz. Bulanık görseller analizin hassasiyetini düşürebilir.
+* **Bekleme Süresi:** Verilerinizi (metin ve/veya fotoğraf) girip **"Analiz Et"** butonuna bastıktan sonra yapay zekânın değerlendirmesi 10-15 saniye sürebilir, lütfen işlem bitene kadar pencereyi kapatmayınız.
+
+**Söylem İçeriği (Nelere Dikkat Etmelisiniz?):**
+* **Kavramsal Doğruluk:** Matematiksel terimleri ve kuralları doğru bağlamda kullandığınızı kontrol ediniz.
+* **Temsil Geçişleri:** Çözümünüzde farklı temsiller (grafik, tablo, cebirsel ifade, çizim vb.) kullanmaya ve aralarındaki geçişleri açıklamaya özen gösteriniz.
+* **Argümantasyon (Gerekçelendirme):** Sadece matematiksel sonuca odaklanmayınız. *"Neden bu yolu seçtim?"*, *"Bu iddiamın kanıtı nedir?"* sorularına yanıt veren zengin bir söylem geliştiriniz.
+""")
+
+st.markdown("---") # Bölümler arası ayırıcı çizgi
+
 
 # Güvenli Anahtar Kontrolü
 try:
