@@ -8,31 +8,13 @@ from PIL import Image
 st.set_page_config(page_title="Matematiksel Söylem Koçu", page_icon="🧮", layout="centered")
 
 # --- KURUMSAL BANNER VE BAŞLIK BÖLÜMÜ ---
-col1, col2 = st.columns([1, 4])
-
-with col1:
-    # Daha kararlı bir logo linki deniyoruz veya GitHub'a yüklediğiniz logo ismini yazın
-    logo_url = "https://cdn.iuc.edu.tr/FileHandler.ashx?f=SuN_4kHlSEuRLhTvH_RFZA" 
-    st.image(logo_url, width=120)
-
-with col2:
-    st.markdown("""
-        <div style='text-align: left; padding-top: 10px;'>
-            <h2 style='color: #003366; margin-bottom: 0; font-family: sans-serif;'>İSTANBUL ÜNİVERSİTESİ-CERRAHPAŞA</h2>
-            <h3 style='color: #003366; margin-top: 0; font-family: sans-serif;'>Hasan Âli Yücel Eğitim Fakültesi</h3>
-        </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("<hr style='border: 2px solid #003366;'>", unsafe_allow_html=True)
-
-# Çalışma Başlığı - Cerrahpaşa Laciverti ve Altın Sarısı Vurgulu
 st.markdown("""
     <style>
     .study-title {
         text-align: center;
         color: #ffffff;
         background: linear-gradient(90deg, #003366 0%, #00509d 100%);
-        padding: 30px;
+        padding: 35px;
         border-radius: 15px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         margin-bottom: 25px;
@@ -41,16 +23,25 @@ st.markdown("""
         margin: 0;
         font-size: 2.2em;
         font-weight: bold;
+        line-height: 1.2;
     }
-    .study-title p {
-        margin: 10px 0 0 0;
-        font-size: 1.2em;
-        opacity: 0.9;
+    .authors {
+        margin-top: 20px;
+        font-size: 1.4em;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+    .platform-sub {
+        margin-top: 10px;
+        font-size: 1.1em;
+        opacity: 0.95;
+        font-weight: 300;
     }
     </style>
     <div class='study-title'>
         <h1>Matematiksel Söylem Analizi ve Geliştirme Portalı</h1>
-        <p>Doç. Dr. Sezer KÖSE BİBER - Yapay Zekâ Destekli Söylem Koçu Araştırma Platformu</p>
+        <div class='authors'>Doç. Dr. Mahir BİBER & Doç. Dr. Sezer KÖSE BİBER</div>
+        <div class='platform-sub'>Yapay Zekâ Destekli Söylem Koçu Araştırma Platformu</div>
     </div>
 """, unsafe_allow_html=True)
 # --- KURUMSAL BÖLÜM SONU ---
