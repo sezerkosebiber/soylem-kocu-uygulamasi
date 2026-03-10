@@ -8,7 +8,6 @@ from PIL import Image
 st.set_page_config(page_title="Matematiksel Söylem Koçu", page_icon="🧮", layout="centered")
 
 # --- KURUMSAL BANNER VE BAŞLIK BÖLÜMÜ ---
-# vertical_alignment="center" sayesinde logo ve metin dikeyde tam ortalanır.
 col1, col2 = st.columns([1, 4], vertical_alignment="center")
 
 with col1:
@@ -25,7 +24,7 @@ with col2:
 
 st.markdown("<hr style='border: 1.5px solid #003366; margin-top: 10px; margin-bottom: 25px;'>", unsafe_allow_html=True)
 
-# Çalışma Başlığı - Mahir Hocamızın İsmiyle Birlikte
+# Çalışma Başlığı
 st.markdown("""
     <style>
     .study-title {
@@ -60,8 +59,6 @@ st.markdown("""
         <div class='platform-sub'>Yapay Zekâ Destekli Söylem Koçu Araştırma Platformu</div>
     </div>
 """, unsafe_allow_html=True)
-# --- KURUMSAL BÖLÜM SONU ---
-
 
 # --- YÖNERGE VE HATIRLATMALAR BÖLÜMÜ ---
 st.info("""
@@ -69,7 +66,7 @@ st.info("""
 
 **Teknik Hatırlatmalar:**
 * **Görsel Netliği:** Kameradan çekeceğiniz veya yükleyeceğiniz kağıt görüntüsünün aydınlık, yazının tam olarak okunabilir ve net olduğundan emin olunuz. Bulanık görseller analizin hassasiyetini düşürebilir.
-* **Bekleme Süresi:** Verilerinizi (metin ve/veya fotoğraf) girip **"Analiz Et"** butonuna bastıktan sonra yapay zekânın değerlendirmesi 10-15 saniye sürebilir, lütfen işlem bitene kadar pencereyi kapatmayınız.
+* **Bekleme Süresi:** Verilerinizi girip **"Analiz Et"** butonuna bastıktan sonra yapay zekânın değerlendirmesi 10-15 saniye sürebilir, lütfen işlem bitene kadar pencereyi kapatmayınız.
 
 **Söylem İçeriği (Nelere Dikkat Etmelisiniz?):**
 * **Kavramsal Doğruluk:** Matematiksel terimleri ve kuralları doğru bağlamda kullandığınızı kontrol ediniz.
@@ -77,8 +74,7 @@ st.info("""
 * **Argümantasyon (Gerekçelendirme):** Sadece matematiksel sonuca odaklanmayınız. *"Neden bu yolu seçtim?"*, *"Bu iddiamın kanıtı nedir?"* sorularına yanıt veren zengin bir söylem geliştiriniz.
 """)
 
-st.markdown("---") # Bölümler arası ayırıcı çizgi
-
+st.markdown("---")
 
 # Güvenli Anahtar Kontrolü
 try:
@@ -114,13 +110,21 @@ with col1:
 with col2:
     kamera_cekimi = st.camera_input("Veya Kameradan Çek")
 
+st.markdown("---")
+
+# --- ONAY KUTUCUĞU (GÜVENLİK BARİYERİ) ---
+onay_kutusu = st.checkbox("Yönergeleri okudum, yüklediğim görsellerin/metnin netliğini kontrol ettim ve analize hazırım.")
+
+# Analiz ve Kayıt İşlemi
 if st.button("Analiz Et"):
-    if not ogrenci_no:
+    if not onay_kutusu:
+        st.warning("⚠️ Lütfen analize başlamadan önce yukarıdaki onay kutucuğunu işaretleyiniz.")
+    elif not ogrenci_no:
         st.warning("Lütfen öğrenci numaranızı/rumuzunuzu giriniz.")
     elif not ogrenci_metni and not yuklenen_dosya and not kamera_cekimi:
         st.warning("Lütfen bir metin yazın, dosya yükleyin veya fotoğraf çekin.")
     else:
-        with st.spinner("Tüm veriler analiz ediliyor..."):
+        with st.spinner("Tüm veriler analiz ediliyor... Lütfen bekleyiniz."):
             try:
                 # 1. YAPAY ZEKA İÇİN İÇERİK HAZIRLAMA
                 icerik = []
