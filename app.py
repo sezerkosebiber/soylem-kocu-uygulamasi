@@ -12,7 +12,7 @@ col1, col2 = st.columns([1, 4])
 
 with col1:
     # Daha kararlı bir logo linki deniyoruz veya GitHub'a yüklediğiniz logo ismini yazın
-    logo_url = "https://hayef.iuc.edu.tr/img/logo.png" 
+    logo_url = "https://cdn.iuc.edu.tr/FileHandler.ashx?f=SuN_4kHlSEuRLhTvH_RFZA" 
     st.image(logo_url, width=120)
 
 with col2:
