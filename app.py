@@ -12,7 +12,7 @@ col1, col2 = st.columns([1, 4])
 
 with col1:
     # Fakülte logosunu resmi adresten çekiyoruz
-    st.image("https://cdn.iuc.edu.tr/static/img/logolar/iuc_logo_v2.png", width=120)
+    st.image("https://cdn.iuc.edu.tr/FileHandler.ashx?f=SuN_4kHlSEuRLhTvH_RFZA", width=120)
 
 with col2:
     st.markdown("""
