@@ -11,39 +11,48 @@ st.set_page_config(page_title="Matematiksel Söylem Koçu", page_icon="🧮", la
 col1, col2 = st.columns([1, 4])
 
 with col1:
-    # Fakülte logosunu resmi adresten çekiyoruz
-    st.image("https://cdn.iuc.edu.tr/FileHandler.ashx?f=SuN_4kHlSEuRLhTvH_RFZA", width=120)
+    # Daha kararlı bir logo linki deniyoruz veya GitHub'a yüklediğiniz logo ismini yazın
+    logo_url = "https://hayef.iuc.edu.tr/img/logo.png" 
+    st.image(logo_url, width=120)
 
 with col2:
     st.markdown("""
-        <div style='text-align: left;'>
-            <h3 style='color: #003366; margin-bottom: 0;'>İSTANBUL ÜNİVERSİTESİ-CERRAHPAŞA</h3>
-            <h4 style='color: #003366; margin-top: 0;'>Hasan Âli Yücel Eğitim Fakültesi</h4>
+        <div style='text-align: left; padding-top: 10px;'>
+            <h2 style='color: #003366; margin-bottom: 0; font-family: sans-serif;'>İSTANBUL ÜNİVERSİTESİ-CERRAHPAŞA</h2>
+            <h3 style='color: #003366; margin-top: 0; font-family: sans-serif;'>Hasan Âli Yücel Eğitim Fakültesi</h3>
         </div>
     """, unsafe_allow_html=True)
 
-st.markdown("---")
+st.markdown("<hr style='border: 2px solid #003366;'>", unsafe_allow_html=True)
 
-# Çalışma Başlığı - Renklendirilmiş ve Stilize Edilmiş
+# Çalışma Başlığı - Cerrahpaşa Laciverti ve Altın Sarısı Vurgulu
 st.markdown("""
     <style>
     .study-title {
         text-align: center;
-        color: #4B0082; /* İsterseniz farklı bir renk koduyla değiştirebiliriz */
-        background-color: #f0f2f6;
-        padding: 20px;
-        border-radius: 10px;
-        border-left: 10px solid #003366;
-        font-family: 'Helvetica', sans-serif;
+        color: #ffffff;
+        background: linear-gradient(90deg, #003366 0%, #00509d 100%);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 25px;
+    }
+    .study-title h1 {
+        margin: 0;
+        font-size: 2.2em;
+        font-weight: bold;
+    }
+    .study-title p {
+        margin: 10px 0 0 0;
+        font-size: 1.2em;
+        opacity: 0.9;
     }
     </style>
     <div class='study-title'>
         <h1>Matematiksel Söylem Analizi ve Geliştirme Portalı</h1>
-        <p style='font-size: 1.2em;'>Yapay Zekâ Destekli Söylem Koçu Araştırma Platformu</p>
+        <p>Doç. Dr. Sezer KÖSE BİBER - Yapay Zekâ Destekli Söylem Koçu Araştırma Platformu</p>
     </div>
 """, unsafe_allow_html=True)
-
-st.write("") # Boşluk
 # --- KURUMSAL BÖLÜM SONU ---
 
 
